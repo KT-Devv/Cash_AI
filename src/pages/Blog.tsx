@@ -1,5 +1,3 @@
-import React from 'react';
-
 const blogPosts = [
   {
     title: 'The Future of AI in Banking',

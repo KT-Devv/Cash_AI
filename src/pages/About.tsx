@@ -1,4 +1,3 @@
-import React from 'react';
 import { Users, Trophy, Target } from 'lucide-react';
 
 const teamMembers = [

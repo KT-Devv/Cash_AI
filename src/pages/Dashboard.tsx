@@ -1,4 +1,3 @@
-import React from 'react';
 import { Phone, Clock, ThumbsUp, AlertTriangle } from 'lucide-react';
 
 interface CallRecord {

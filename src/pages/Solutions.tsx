@@ -1,4 +1,3 @@
-import React from 'react';
 import { Shield, Brain, BarChart as ChartBar, MessageSquare } from 'lucide-react';
 
 const solutions = [

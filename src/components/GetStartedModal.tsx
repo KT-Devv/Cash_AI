@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { X, Mail, Lock } from 'lucide-react';
 import { createClient } from '@supabase/supabase-js';
 import { useNavigate } from 'react-router-dom';

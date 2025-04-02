@@ -1,4 +1,3 @@
-import React from 'react';
 import { Shield, BarChart as ChartBar, Users, MessageSquare, Building2, Lock } from 'lucide-react';
 
 const features = [
