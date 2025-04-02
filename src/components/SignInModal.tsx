@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { X, Mail, Lock } from 'lucide-react';
-import { createClient } from '@supabase/supabase-js';
 import { useNavigate } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
+import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -44,7 +45,7 @@ export default function SignInModal({ isOpen, onClose, onSwitchToGetStarted }: S
       });
 
       if (error) throw error;
-      
+
       setIsClosing(true);
       setTimeout(() => {
         onClose();
@@ -57,31 +58,29 @@ export default function SignInModal({ isOpen, onClose, onSwitchToGetStarted }: S
     }
   };
 
-  const handleGoogleSignIn = async () => {
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-      });
+  // const handleGoogleSignIn = async () => {
+  //   try {
+  //     const { error } = await supabase.auth.signInWithOAuth({
+  //       provider: 'google',
+  //     });
 
-      if (error) throw error;
-      
-      setIsClosing(true);
-      setTimeout(() => {
-        onClose();
-        navigate('/dashboard');
-      }, 200);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    }
-  };
+  //     if (error) throw error;
+
+  //     setIsClosing(true);
+  //     setTimeout(() => {
+  //       onClose();
+  //       navigate('/dashboard');
+  //     }, 200);
+  //   } catch (err) {
+  //     setError(err instanceof Error ? err.message : 'An error occurred');
+  //   }
+  // };
 
   return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black transition-opacity duration-200 ${
-      isClosing ? 'opacity-0' : 'opacity-100'
-    }`}>
-      <div className={`bg-white rounded-xl w-full max-w-md p-8 relative transition-all duration-200 ${
-        isClosing ? 'scale-95 opacity-0' : 'scale-100 opacity-100'
+    <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black transition-opacity duration-200 ${isClosing ? 'opacity-0' : 'opacity-100'
       }`}>
+      <div className={`bg-white rounded-xl w-full max-w-md p-8 relative transition-all duration-200 ${isClosing ? 'scale-95 opacity-0' : 'scale-100 opacity-100'
+        }`}>
         <button
           onClick={handleClose}
           className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors"
@@ -94,13 +93,27 @@ export default function SignInModal({ isOpen, onClose, onSwitchToGetStarted }: S
           <p className="mt-2 text-slate-600">Sign in to your account</p>
         </div>
 
-        <button
-          onClick={handleGoogleSignIn}
+        {/* <button
+          // onClick={handleGoogleSignIn}
           className="w-full py-3 px-4 border border-slate-200 rounded-lg flex items-center justify-center space-x-2 hover:bg-slate-50 transition-all duration-200 mb-6 hover:border-blue-600"
-        >
-          <img src="https://www.google.com/favicon.ico" alt="Google" className="w-5 h-5" />
-          <span>Continue with Google</span>
-        </button>
+        > */}
+          <GoogleLogin
+          width='100%'
+          size='large'
+            onSuccess={(credentialResponse) => {
+              console.log(credentialResponse)
+              setTimeout(() => {
+                onClose();
+                navigate('/dashboard');
+              }, 200);
+            }}
+            onError={() => {
+              console.log("Login failed")
+            }}
+          />
+          {/* <img src="https://www.google.com/favicon.ico" alt="Google" className="w-5 h-5" />
+          <span>Continue with Google</span> */}
+        {/* </button> */}
 
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">

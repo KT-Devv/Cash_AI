@@ -30,8 +30,8 @@ function App() {
   return (
     <Router>
       <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-        <Header 
-          onGetStarted={() => setIsGetStartedOpen(true)} 
+        <Header
+          onGetStarted={() => setIsGetStartedOpen(true)}
           onSignIn={() => setIsSignInOpen(true)}
         />
         <Routes>
@@ -45,12 +45,12 @@ function App() {
         </Routes>
         <Footer />
         <AIAssistant />
-        <GetStartedModal 
-          isOpen={isGetStartedOpen} 
+        <GetStartedModal
+          isOpen={isGetStartedOpen}
           onClose={() => setIsGetStartedOpen(false)}
           onSwitchToSignIn={handleSwitchToSignIn}
         />
-        <SignInModal 
+        <SignInModal
           isOpen={isSignInOpen}
           onClose={() => setIsSignInOpen(false)}
           onSwitchToGetStarted={handleSwitchToGetStarted}

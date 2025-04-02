@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { X, Mail, Lock } from 'lucide-react';
-import { createClient } from '@supabase/supabase-js';
 import { useNavigate } from 'react-router-dom';
+import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -44,7 +44,7 @@ export default function GetStartedModal({ isOpen, onClose, onSwitchToSignIn }: G
       });
 
       if (error) throw error;
-      
+
       setIsClosing(true);
       setTimeout(() => {
         onClose();
@@ -64,7 +64,7 @@ export default function GetStartedModal({ isOpen, onClose, onSwitchToSignIn }: G
       });
 
       if (error) throw error;
-      
+
       setIsClosing(true);
       setTimeout(() => {
         onClose();
@@ -76,12 +76,10 @@ export default function GetStartedModal({ isOpen, onClose, onSwitchToSignIn }: G
   };
 
   return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black transition-opacity duration-200 ${
-      isClosing ? 'opacity-0' : 'opacity-100'
-    }`}>
-      <div className={`bg-white rounded-xl w-full max-w-md p-8 relative transition-all duration-200 ${
-        isClosing ? 'scale-95 opacity-0' : 'scale-100 opacity-100'
+    <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black transition-opacity duration-200 ${isClosing ? 'opacity-0' : 'opacity-100'
       }`}>
+      <div className={`bg-white rounded-xl w-full max-w-md p-8 relative transition-all duration-200 ${isClosing ? 'scale-95 opacity-0' : 'scale-100 opacity-100'
+        }`}>
         <button
           onClick={handleClose}
           className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors"
