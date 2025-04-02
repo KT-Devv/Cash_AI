@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { X, Mail, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createClient } from '@supabase/supabase-js';
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from 'jwt-decode';
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -57,23 +59,23 @@ export default function GetStartedModal({ isOpen, onClose, onSwitchToSignIn }: G
     }
   };
 
-  const handleGoogleSignIn = async () => {
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-      });
+  // const handleGoogleSignIn = async () => {
+  //   try {
+  //     const { error } = await supabase.auth.signInWithOAuth({
+  //       provider: 'google',
+  //     });
 
-      if (error) throw error;
+  //     if (error) throw error;
 
-      setIsClosing(true);
-      setTimeout(() => {
-        onClose();
-        navigate('/dashboard');
-      }, 200);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    }
-  };
+  //     setIsClosing(true);
+  //     setTimeout(() => {
+  //       onClose();
+  //       navigate('/dashboard');
+  //     }, 200);
+  //   } catch (err) {
+  //     setError(err instanceof Error ? err.message : 'An error occurred');
+  //   }
+  // };
 
   return (
     <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black transition-opacity duration-200 ${isClosing ? 'opacity-0' : 'opacity-100'
@@ -92,13 +94,27 @@ export default function GetStartedModal({ isOpen, onClose, onSwitchToSignIn }: G
           <p className="mt-2 text-slate-600">Create your account to continue</p>
         </div>
 
-        <button
+        <GoogleLogin
+          onSuccess={(credentialResponse) => {
+            const decoded = jwtDecode(credentialResponse!.credential!);
+            console.log("User Info: ", decoded)
+            setTimeout(() => {
+              onClose();
+              navigate('/dashboard');
+            }, 200);
+          }}
+          onError={() => {
+            console.log("Sign up failed")
+          }}
+        />
+
+        {/* <button
           onClick={handleGoogleSignIn}
           className="w-full py-3 px-4 border border-slate-200 rounded-lg flex items-center justify-center space-x-2 hover:bg-slate-50 transition-all duration-200 mb-6 hover:border-blue-600"
         >
           <img src="https://www.google.com/favicon.ico" alt="Google" className="w-5 h-5" />
           <span>Continue with Google</span>
-        </button>
+        </button> */}
 
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
