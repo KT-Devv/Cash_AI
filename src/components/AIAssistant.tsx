@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { MessageSquare, X, Send, Bot } from 'lucide-react';
 
 interface Message {
@@ -15,22 +15,52 @@ export default function AIAssistant() {
     }
   ]);
   const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSend = () => {
-    if (!input.trim()) return;
+  const handleSend = async () => {
+    if (!input.trim() || isLoading) return;
 
+    const userMessage = input.trim();
+    setInput('');
+    
     // Add user message
-    setMessages(prev => [...prev, { type: 'user', content: input }]);
+    setMessages(prev => [...prev, { type: 'user', content: userMessage }]);
+    setIsLoading(true);
 
-    // Simulate AI response
-    setTimeout(() => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-chat`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: userMessage }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to get AI response');
+      }
+
+      const data = await response.json();
+      
+      if (!data.response) {
+        throw new Error('Invalid response from AI service');
+      }
+
       setMessages(prev => [...prev, {
         type: 'assistant',
-        content: 'Thank you for your message. Our AI is currently in demo mode. In production, this would connect to our advanced banking AI system to provide real-time assistance.'
+        content: data.response
       }]);
-    }, 1000);
-
-    setInput('');
+    } catch (error) {
+      console.error('AI chat error:', error);
+      setMessages(prev => [...prev, {
+        type: 'assistant',
+        content: 'I apologize, but I encountered an error. Please try again later.'
+      }]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -85,6 +115,15 @@ export default function AIAssistant() {
                 </div>
               </div>
             ))}
+            {isLoading && (
+              <div className="flex justify-start">
+                <div className="bg-slate-100 rounded-2xl px-4 py-2 flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Input */}
@@ -97,10 +136,11 @@ export default function AIAssistant() {
                 onKeyPress={handleKeyPress}
                 placeholder="Type your message..."
                 className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                disabled={isLoading}
               />
               <button
                 onClick={handleSend}
-                disabled={!input.trim()}
+                disabled={!input.trim() || isLoading}
                 className="p-2 text-blue-600 hover:text-blue-700 disabled:text-slate-400"
               >
                 <Send className="h-5 w-5" />
