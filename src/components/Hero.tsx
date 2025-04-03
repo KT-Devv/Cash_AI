@@ -8,7 +8,7 @@ export default function Hero() {
             <span className="text-blue-600"> AI-Powered</span> Intelligence
           </h1>
           <p className="mt-6 text-xl text-slate-600 max-w-3xl mx-auto">
-            Cash.AI revolutionizes banking operations with advanced artificial intelligence. 
+            Echo-Bank revolutionizes banking operations with advanced artificial intelligence. 
             Streamline processes, enhance security, and deliver exceptional customer experiences.
           </p>
           <div className="mt-10 flex justify-center gap-4">

@@ -44,7 +44,7 @@ return (
         Transform Your Customer Service with Voice AI
         </h1>
         <p className="mt-6 text-xl text-slate-600 max-w-3xl mx-auto">
-        Discover how Cash.AI's voice analytics platform can revolutionize your customer interactions
+        Discover how Echo_Bank's voice analytics platform can revolutionize your customer interactions
         and drive better business outcomes.
         </p>
     </div>

@@ -175,7 +175,7 @@ export default function GetStarted() {
     <div className="min-h-screen pt-24 bg-gradient-to-b from-slate-50 to-white">
       <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-slate-900">Get Started with Cash.AI</h1>
+          <h1 className="text-3xl font-bold text-slate-900">Get Started with Echo-Bank</h1>
           <p className="mt-2 text-slate-600">
             Set up your account in just a few steps
           </p>

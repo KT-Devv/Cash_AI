@@ -20,7 +20,7 @@ export default function Login() {
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-slate-900">Welcome Back</h1>
           <p className="mt-2 text-slate-600">
-            Sign in to access your Cash.AI dashboard
+            Sign in to access your Echo-Bank Ai dashboard
           </p>
         </div>
 

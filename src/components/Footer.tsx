@@ -8,7 +8,7 @@ export default function Footer() {
           <div>
             <div className="flex items-center">
               <Brain className="h-8 w-8 text-blue-400" />
-              <span className="ml-2 text-xl font-bold">Cash.AI</span>
+              <span className="ml-2 text-xl font-bold">Echo-Bank</span>
             </div>
             <p className="mt-4 text-slate-400">
               Transforming banking with artificial intelligence
@@ -40,7 +40,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="mt-12 pt-8 border-t border-slate-800 text-center text-slate-400">
-          <p>© 2025 Cash.AI. All rights reserved.</p>
+          <p>© 2025 Echo-Bank All rights reserved.</p>
         </div>
       </div>
     </footer>

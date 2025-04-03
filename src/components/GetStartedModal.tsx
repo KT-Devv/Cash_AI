@@ -90,7 +90,7 @@ export default function GetStartedModal({ isOpen, onClose, onSwitchToSignIn }: G
         </button>
 
         <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-slate-900">Get Started with Cash.AI</h2>
+          <h2 className="text-2xl font-bold text-slate-900">Get Started with Echo-Bank</h2>
           <p className="mt-2 text-slate-600">Create your account to continue</p>
         </div>
 

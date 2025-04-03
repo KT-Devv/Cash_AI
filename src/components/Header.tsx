@@ -13,7 +13,7 @@ export default function Header({ onGetStarted, onSignIn }: HeaderProps) {
         <div className="flex justify-between items-center h-16">
           <Link to="/" className="flex items-center">
             <Brain className="h-8 w-8 text-blue-600" />
-            <span className="ml-2 text-xl font-bold text-slate-900">Cash.AI</span>
+            <span className="ml-2 text-xl font-bold text-slate-900">Echo-Bank</span>
           </Link>
           <nav className="hidden md:flex space-x-8">
             <Link to="/solutions" className="text-slate-600 hover:text-blue-600 transition-colors">Solutions</Link>

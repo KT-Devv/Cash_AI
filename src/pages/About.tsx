@@ -45,7 +45,7 @@ export default function About() {
       {/* Hero Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-slate-900">About Cash.AI</h1>
+          <h1 className="text-4xl font-bold text-slate-900">About Echo-Bank</h1>
           <p className="mt-4 text-xl text-slate-600 max-w-3xl mx-auto">
             We're on a mission to revolutionize banking through artificial intelligence,
             making financial services more efficient, secure, and accessible for everyone.

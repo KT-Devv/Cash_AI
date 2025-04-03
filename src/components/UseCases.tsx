@@ -23,7 +23,7 @@ export default function UseCases() {
         <div className="text-center">
           <h2 className="text-3xl font-bold text-slate-900">Industry Solutions</h2>
           <p className="mt-4 text-lg text-slate-600">
-            Discover how Cash.AI transforms different banking sectors
+            Discover how Echo-Bank transforms different banking sectors
           </p>
         </div>
         <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
