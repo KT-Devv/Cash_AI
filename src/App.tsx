@@ -13,6 +13,7 @@ import AIAssistant from './components/AIAssistant';
 import GetStartedModal from './components/GetStartedModal';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import RequestDemo from './pages/RequestDemo';
+import LearnMore from './pages/LearnMore';
 
 function App() {
   const [isGetStartedOpen, setIsGetStartedOpen] = useState(false);
@@ -43,7 +44,8 @@ function App() {
           <Route path="/solutions" element={<Solutions />} />
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/requestdemo" element={<RequestDemo />} />
+          <Route path="/request-demo" element={<RequestDemo />} />
+          <Route path="/learn-more" element={<LearnMore />} />
         </Routes>
         <Footer />
         <AIAssistant />
