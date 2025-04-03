@@ -38,7 +38,31 @@ export default function AIAssistant() {
     'default': 'I specialize in banking services. Please ask about:\n- Account balances\n- Transfers\n- Loans\n- Cards\n- Bill payments'
   };
 
-  // ... (keep previous scroll and localStorage effects)
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  useEffect(() => {
+    localStorage.setItem('chatMessages', JSON.stringify(messages));
+  }, [messages]);
+
+  const formatMessageContent = (content: string) => {
+    return content.split('\n').map((line, index) => (
+      <React.Fragment key={index}>
+        {line}
+        <br />
+      </React.Fragment>
+    ));
+  };
+
+  const handleError = (error: unknown) => {
+    console.error(error);
+    setMessages(prev => [...prev, {
+      type: 'assistant',
+      content: 'Sorry, I encountered an error. Please try again.',
+      timestamp: Date.now()
+    }]);
+  };
 
   const handleSend = () => {
     if (!input.trim() || isLoading) return;
@@ -65,17 +89,78 @@ export default function AIAssistant() {
     }, 500);
   };
 
-  // ... (keep remaining existing code)
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
 
   return (
     <div className="fixed bottom-6 right-6 z-50">
-      {/* ... (keep toggle button code) */}
+      {!isOpen && (
+        <button
+          onClick={() => setIsOpen(true)}
+          className="bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition-colors"
+          aria-label="Open chat"
+        >
+          <MessageSquare className="h-6 w-6" />
+        </button>
+      )}
 
       {isOpen && (
         <div className="bg-white rounded-2xl shadow-2xl w-96 max-w-[calc(100vw-2rem)] flex flex-col">
-          {/* ... (keep header code) */}
+          <div className="flex items-center justify-between p-4 border-b">
+            <div className="flex items-center gap-2">
+              <Bot className="h-6 w-6 text-blue-600" />
+              <h3 className="font-semibold text-slate-900">AI Banking Assistant</h3>
+            </div>
+            <button
+              onClick={() => setIsOpen(false)}
+              className="text-slate-500 hover:text-slate-700"
+              aria-label="Close chat"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
 
-          {/* Input section with mic icon */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 max-h-[400px]">
+            {messages.map((message, index) => (
+              <div
+                key={`${message.timestamp}-${index}`}
+                className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div
+                  className={`max-w-[80%] rounded-2xl px-4 py-2 ${
+                    message.type === 'user'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-slate-100 text-slate-900'
+                  }`}
+                >
+                  {formatMessageContent(message.content)}
+                  <div className="text-xs mt-1 opacity-70">
+                    {new Date(message.timestamp || Date.now()).toLocaleTimeString()}
+                  </div>
+                </div>
+              </div>
+            ))}
+            {isLoading && (
+              <div className="flex justify-start">
+                <div className="max-w-[80%] rounded-2xl px-4 py-2 bg-slate-100 text-slate-900">
+                  <div className="flex items-center gap-2">
+                    <span className="animate-pulse">Processing</span>
+                    <div className="flex space-x-1">
+                      <div className="w-2 h-2 bg-slate-500 rounded-full animate-bounce" />
+                      <div className="w-2 h-2 bg-slate-500 rounded-full animate-bounce delay-100" />
+                      <div className="w-2 h-2 bg-slate-500 rounded-full animate-bounce delay-200" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+
           <div className="p-4 border-t">
             <div className="flex items-center gap-2">
               <input
