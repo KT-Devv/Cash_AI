@@ -1,68 +1,59 @@
+import React, { useState } from 'react';
+import { MessageSquare, X, Send, Bot } from 'lucide-react';
+
+interface Message {
+  type: 'user' | 'assistant';
+  content: string;
+}
+
 export default function AIAssistant() {
-  // ... existing state ...
-  const [audioFile, setAudioFile] = useState<File | null>(null);
-
-  // Add audio file handler
-  const handleAudioUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setAudioFile(file);
+  const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      type: 'assistant',
+      content: 'Hello! I\'m your AI banking assistant. How can I help you today?'
     }
-  };
+  ]);
+  const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Modified handleSend to handle both text and audio
   const handleSend = async () => {
-    if ((!input.trim() && !audioFile) || isLoading) return;
+    if (!input.trim() || isLoading) return;
 
-    setIsLoading(true);
+    const userMessage = input.trim();
+    setInput('');
     
+    // Add user message
+    setMessages(prev => [...prev, { type: 'user', content: userMessage }]);
+    setIsLoading(true);
+
     try {
-      let responseData;
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-chat`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: userMessage }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to get AI response');
+      }
+
+      const data = await response.json();
       
-      if (audioFile) {
-        // Handle audio processing
-        const formData = new FormData();
-        formData.append("audio", audioFile);
-
-        const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/process_audio`, {
-          method: "POST",
-          headers: {
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          },
-          body: formData,
-        });
-
-        responseData = await response.json();
-        setAudioFile(null); // Clear audio file after sending
-      } else {
-        // Existing text handling
-        const userMessage = input.trim();
-        setInput('');
-        setMessages(prev => [...prev, { type: 'user', content: userMessage }]);
-
-        const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-chat`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ message: userMessage }),
-        });
-
-        responseData = await response.json();
+      if (!data.response) {
+        throw new Error('Invalid response from AI service');
       }
 
-      // Handle response
-      if (responseData?.response) {
-        setMessages(prev => [...prev, {
-          type: 'assistant',
-          content: responseData.response
-        }]);
-      } else {
-        throw new Error('Invalid response format');
-      }
+      setMessages(prev => [...prev, {
+        type: 'assistant',
+        content: data.response
+      }]);
     } catch (error) {
-      console.error('Processing error:', error);
+      console.error('AI chat error:', error);
       setMessages(prev => [...prev, {
         type: 'assistant',
         content: 'I apologize, but I encountered an error. Please try again later.'
@@ -72,81 +63,89 @@ export default function AIAssistant() {
     }
   };
 
-  // Add audio UI elements
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
   return (
     <div className="fixed bottom-6 right-6 z-50">
-      {/* ... existing toggle button ... */}
-      
+      {!isOpen && (
+        <button
+          onClick={() => setIsOpen(true)}
+          className="bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition-colors"
+        >
+          <MessageSquare className="h-6 w-6" />
+        </button>
+      )}
+
       {isOpen && (
         <div className="bg-white rounded-2xl shadow-2xl w-96 max-w-[calc(100vw-2rem)] flex flex-col">
-          {/* ... existing header and messages ... */}
-          
-          {/* Updated input section */}
+          {/* Header */}
+          <div className="flex items-center justify-between p-4 border-b">
+            <div className="flex items-center gap-2">
+              <Bot className="h-6 w-6 text-blue-600" />
+              <h3 className="font-semibold text-slate-900">AI Assistant</h3>
+            </div>
+            <button
+              onClick={() => setIsOpen(false)}
+              className="text-slate-500 hover:text-slate-700"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 max-h-[400px]">
+            {messages.map((message, index) => (
+              <div
+                key={index}
+                className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div
+                  className={`max-w-[80%] rounded-2xl px-4 py-2 ${
+                    message.type === 'user'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-slate-100 text-slate-900'
+                  }`}
+                >
+                  {message.content}
+                </div>
+              </div>
+            ))}
+            {isLoading && (
+              <div className="flex justify-start">
+                <div className="bg-slate-100 rounded-2xl px-4 py-2 flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Input */}
           <div className="p-4 border-t">
             <div className="flex items-center gap-2">
-              {/* Audio upload button */}
-              <label className="p-2 text-blue-600 hover:text-blue-700 cursor-pointer">
-                <input
-                  type="file"
-                  accept="audio/*"
-                  onChange={handleAudioUpload}
-                  className="hidden"
-                />
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  className="h-5 w-5" 
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                >
-                  <path d="M12 15c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v7c0 1.66 1.34 3 3 3z"/>
-                  <path d="M17 12c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V23h2v-4.08c3.39-.49 6-3.39 6-6.92h-2z"/>
-                </svg>
-              </label>
-
-              {/* Text input */}
               <input
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Type or record a message..."
+                placeholder="Type your message..."
                 className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                 disabled={isLoading}
               />
-
-              {/* Send/Record button */}
               <button
                 onClick={handleSend}
-                disabled={(!input.trim() && !audioFile) || isLoading}
+                disabled={!input.trim() || isLoading}
                 className="p-2 text-blue-600 hover:text-blue-700 disabled:text-slate-400"
               >
-                {audioFile ? (
-                  <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    className="h-5 w-5" 
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-                  </svg>
-                ) : (
-                  <Send className="h-5 w-5" />
-                )}
+                <Send className="h-5 w-5" />
               </button>
             </div>
-            
-            {/* Audio file preview */}
-            {audioFile && (
-              <div className="mt-2 text-sm text-slate-600 flex items-center gap-2">
-                <span>Audio ready: {audioFile.name}</span>
-                <button 
-                  onClick={() => setAudioFile(null)}
-                  className="text-red-500 hover:text-red-700"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-            )}
           </div>
         </div>
       )}
