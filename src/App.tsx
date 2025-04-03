@@ -12,6 +12,7 @@ import SignInModal from './components/SignInModal';
 import AIAssistant from './components/AIAssistant';
 import GetStartedModal from './components/GetStartedModal';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import RequestDemo from './pages/RequestDemo';
 
 function App() {
   const [isGetStartedOpen, setIsGetStartedOpen] = useState(false);
@@ -42,6 +43,7 @@ function App() {
           <Route path="/solutions" element={<Solutions />} />
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/requestdemo" element={<RequestDemo />} />
         </Routes>
         <Footer />
         <AIAssistant />
